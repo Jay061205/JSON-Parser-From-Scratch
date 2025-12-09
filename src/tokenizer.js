@@ -52,15 +52,53 @@ function tokenizer(input){
             let start = i;
             let raw = "";
 
+            // Negative integers
             if(ch === '-'){
                 raw += '-';
                 i++;
             }
 
+            // integers part
             while (i<len && input[i] >= '0' && input[i] <= '9'){
-                raw += input[i];
-                i++;
-            }
+                    raw += input[i];
+                    i++;
+                }
+
+                if(i<len && input[i] === '.'){
+                    raw += '.';
+                    i++;
+
+
+                    if(!(input[i] >= '0' && input[i] <= '9')){
+                        throw new Error(`Invalid number at position ${start}`);
+                    }
+
+                    while(i < len && input[i] >= '0' && input[i] <= '9'){
+                        raw += input[i];
+                        i++;
+                    }
+                }
+            
+
+                if(i<len && (input[i] === 'e' || input[i] === 'E')){
+                    raw += input[i];
+                    i++;
+
+                    if(input[i] === '+' || input[i] === '-'){
+                        raw += input[i];
+                        i++;
+                    }
+
+                    if(!(input[i] >= '0' && input[i] <= '9')){
+                        throw new Error(`Invalid exponent at position ${start}`);
+                    }
+
+                    while(i<len && input[i] >= '0' && input[i] <= '9'){
+                        raw += input[i];
+                        i++;
+                    }
+                }
+
             const value = Number(raw);
             tokens.push({
                 type: "NUMBER",
@@ -70,7 +108,7 @@ function tokenizer(input){
             continue;
         }
 
-
+        // Including the Booleans
         if(input.startsWith("true",i)){
             tokens.push({
                 type: "TRUE",
@@ -91,6 +129,8 @@ function tokenizer(input){
             continue;
         }
         
+
+        // Including the Null values
         if(input.startsWith("null",i)){
             tokens.push({
                 type: "NULL",
