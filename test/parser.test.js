@@ -102,3 +102,11 @@ test("parses exponent numbers", () => {
     expect(r3).toEqual({"c":250})
     expect(r4).toEqual({"d":-0.0042})
 })
+
+
+test("Parses the escape strings too", () => {
+    const tokens = tokenizer('"Hello\\nWorld"');
+    const parser = createParser(tokens);
+
+    expect(parser.parseValue()).toBe("Hello\nWorld");
+})

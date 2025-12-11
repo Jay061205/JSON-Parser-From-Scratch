@@ -25,18 +25,45 @@ function tokenizer(input){
         }
 
         // Including the strings
-        if(ch === '"'){
+ if (ch === '"') {
             let start = i;
-            i++;
+            i++; 
             let value = "";
-            while(i<len && input[i] !=='"'){
-                value += input[i];
-                i++
+
+            while (i < len) {
+                const c = input[i];
+
+                // End of string
+                if (c === '"') {
+                    i++;
+                    break;
+                }
+
+                // Escape sequences
+                if (c === '\\') {
+                    i++;
+                    const esc = input[i];
+
+                    if (esc === '"') value += '"';
+                    else if (esc === '\\') value += '\\';
+                    else if (esc === '/') value += '/';
+                    else if (esc === 'b') value += '\b';
+                    else if (esc === 'f') value += '\f';
+                    else if (esc === 'n') value += '\n';
+                    else if (esc === 'r') value += '\r';
+                    else if (esc === 't') value += '\t';
+                    else {
+                        throw new Error(`Invalid escape sequence \\${esc} at position ${i}`);
+                    }
+
+                    i++;
+                    continue;
+                }
+
+                // Normal character
+                value += c;
+                i++;
             }
-            if(i >= len){   // Imagine there is user who has not ended with " than the above while loop will not end so to make sure this error hits
-                throw new Error(`Unterminated string at position ${start}`);
-            }
-            i++;
 
             tokens.push({
                 type: "STRING",
@@ -140,6 +167,7 @@ function tokenizer(input){
             i += 4;
             continue;
         }
+
 
         throw new Error(`Unhandled character '${ch}' at position ${i}`);
     }
