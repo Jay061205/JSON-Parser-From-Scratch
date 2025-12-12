@@ -1,0 +1,11 @@
+[
+    {
+        "name" : "jay",
+        "marks": [18,16,16,18]
+    },
+    {
+        "age":20,
+        "hobbies":["games","coding","eating"]
+    },
+    {}
+]

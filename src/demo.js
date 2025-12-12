@@ -1,11 +1,16 @@
-const { tokenizer } = require('./tokenizer');
-const { createParser } = require('./parser');
+const fs = require('fs');
+const path = require('path');
+const { parse } = require('./parse');
 
-// const tokens = tokenizer('{"a":1,"b":true}');
-// const parser = createParser(tokens);
 
-// console.log(parser.parseValue());
+console.log(parse('{"a":1, "b":[1,2,3]}'));
+console.log();
 
-console.log(createParser(tokenizer('[1,2,3]')).parseValue());
-console.log(createParser(tokenizer('["a",true,null]')).parseValue());
-console.log(createParser(tokenizer('[{"x":10}, [1,2]]')).parseValue());
+const filepath = path.join(__dirname, "demo.json");
+
+const jsonText = fs.readFileSync(filepath,"utf-8");
+
+const result = parse(jsonText);
+
+
+console.log(result);
