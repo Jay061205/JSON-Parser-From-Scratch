@@ -1,3 +1,14 @@
+function syntaxError(message,tokens,pos){
+    const tok = tokens[pos];
+    const near = tokens
+    .slice(Math.max(0,pos -2),pos + 3)
+    .map(t => t.value)
+    .join(" ");
+
+    return new Error(`${message} at position ${tok.pos}\n near: ${near}`);
+}
+
+
 function createParser(tokens){
     let pos = 0;
 
@@ -5,7 +16,7 @@ function createParser(tokens){
     const consume = () => tokens[pos++];
     const expect = (type) => {
         if(current().type !== type){
-            throw new Error(`Expected type: ${type}, resulting type: ${current().type}`)
+            throw syntaxError(`Expected '${type}', got '${current().type}'`,tokens,pos);
         }
         return consume();
     }
@@ -23,7 +34,7 @@ function createParser(tokens){
         if(toks.type === 'FALSE') { consume(); return false };
         if(toks.type === 'NULL') { consume(); return null };
 
-        throw new Error(`Unexpected token: ${toks.type}`);
+        throw syntaxError(`Unexpected token '${toks.type}'`, tokens, pos);
     }
 
     const parseObject = () => {
@@ -38,7 +49,7 @@ function createParser(tokens){
         while(true){
             const keyTokens = current();
             if(keyTokens.type !== "STRING"){
-                throw new Error(`Expected STRING key, got ${keyTokens.type}`)
+                throw syntaxError(`Expected STRING key, got '${keyTokens.type}'`, tokens, pos);
             }
             const key = consume().value;
 
