@@ -110,3 +110,11 @@ test("Parses the escape strings too", () => {
 
     expect(parser.parseValue()).toBe("Hello\nWorld");
 })
+
+test("throws parser error on a non-string object key", () => {
+    expect(() => {
+    const tokens = tokenizer('{a: 10}');
+    const parser = createParser(tokens);
+    parser.parseValue();
+    }).toThrow(/Unhandled character 'a'/)
+});

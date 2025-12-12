@@ -1,3 +1,14 @@
+function tokenizerError(message, input, pos){
+    const start = Math.max(0, pos - 10);
+    const end = Math.min(input.length, pos + 10);
+    
+
+    const near = input.slice(start, end);
+
+    return new Error(`${message} at position ${pos}\n near: ${near}`);
+}
+
+
 function tokenizer(input){
     const tokens = []
     const len = input.length;
@@ -25,7 +36,7 @@ function tokenizer(input){
         }
 
         // Including the strings
- if (ch === '"') {
+        if (ch === '"') {
             let start = i;
             i++; 
             let value = "";
@@ -53,7 +64,7 @@ function tokenizer(input){
                     else if (esc === 'r') value += '\r';
                     else if (esc === 't') value += '\t';
                     else {
-                        throw new Error(`Invalid escape sequence \\${esc} at position ${i}`);
+                        throw tokenizerError(`Invalid escape sequence \\${esc}`, input, i);
                     }
 
                     i++;
@@ -63,6 +74,10 @@ function tokenizer(input){
                 // Normal character
                 value += c;
                 i++;
+            }
+
+            if (input[i - 1] !== '"') {
+                throw tokenizerError("Unterminated string", input, start);
             }
 
             tokens.push({
@@ -97,7 +112,7 @@ function tokenizer(input){
 
 
                     if(!(input[i] >= '0' && input[i] <= '9')){
-                        throw new Error(`Invalid number at position ${start}`);
+                        throw tokenizerError(`Invalid number`, input, start);
                     }
 
                     while(i < len && input[i] >= '0' && input[i] <= '9'){
@@ -117,7 +132,7 @@ function tokenizer(input){
                     }
 
                     if(!(input[i] >= '0' && input[i] <= '9')){
-                        throw new Error(`Invalid exponent at position ${start}`);
+                        throw tokenizerError(`Invalid exponent`, input, start);
                     }
 
                     while(i<len && input[i] >= '0' && input[i] <= '9'){
@@ -169,7 +184,7 @@ function tokenizer(input){
         }
 
 
-        throw new Error(`Unhandled character '${ch}' at position ${i}`);
+        throw tokenizerError(`Unhandled character '${ch}'`, input, i);
     }
 
     tokens.push({type: "EOF",pos: i})

@@ -33,3 +33,9 @@ test("Tokenizes numbers", () => {
 test("Throws an error on invalid character", () => {
     expect(() => tokenizer('@')).toThrow()
 })
+
+test("throws tokenizer error on unterminated string", () => {
+    expect(() => {
+        tokenizer('{"name":"jay}');
+    }).toThrow(/Unterminated string/);
+});
