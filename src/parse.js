@@ -7,4 +7,4 @@ function parse(jsonString) {
     return parser.parseValue();
 }
 
-module.exports = { parse };
+module.exports = parse ;
