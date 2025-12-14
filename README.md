@@ -262,23 +262,33 @@ test("parses nested arrays and objects", () => {
 
 ## Benchmarks
 
-Benchmarking is not included yet, but this project is structured so that performance tests can be added easily in the future.
+This project includes a small benchmark suite to measure the performance of the custom JSON parser and to better understand where time is spent during parsing.
 
-The idea for the benchmark suite:
+The benchmarks focus on learning and analysis rather than competing with the native `JSON.parse()` implementation.
 
-- Compare the custom parser with `JSON.parse()`  
-- Test small, medium, and large JSON inputs  
-- Measure tokenizer speed separately from parser speed  
-- Detect performance bottlenecks in number parsing, escape handling, and recursion depth  
+### What is measured
 
-A future `benchmark/` folder may include scripts like:
+- **Small JSON input**  
+  Simple objects with shallow nesting to measure baseline overhead.
 
-- `bench-small.js`
-- `bench-medium.js`
-- `bench-large.js`
-- `bench-vs-native.js`
+- **Medium JSON input**  
+  Moderately nested objects and arrays to observe realistic scaling behavior.
 
-This section will be updated once real benchmarks are created and tested.
+- **Large JSON input**  
+  Deeply nested structures with thousands of objects to stress-test recursion, tokenization, and memory allocation.
+
+- **Native Comparison**  
+  A direct comparison between the custom parser and `JSON.parse()` on the same input to understand performance trade-offs.
+
+### Notes
+
+- Benchmarks are run using `process.hrtime.bigint()` for high-resolution timing.
+- Each benchmark includes a warm-up phase to avoid JIT-related inconsistencies.
+- Results vary depending on machine, Node.js version, and system load.
+- The goal is **not** to outperform `JSON.parse()`, but to understand how a parser behaves as input size grows.
+
+Benchmark scripts are located in the `benchmarks/` directory and can be run directly with Node.js.
+
 
 ---
 
